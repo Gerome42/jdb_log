@@ -5,6 +5,7 @@
 int main(int argc, char const *argv[])
 {	
 	int boucle_principale;
+	FILE *journal_indicatif;
 
 	do
 	{
@@ -14,7 +15,7 @@ int main(int argc, char const *argv[])
 	system("clear");
 	
 	printf("############################################\n");
-	printf("## Journal de Bord Radioamateur de F4LCF  ##\n");
+	printf("##      Journal de Bord Radioamateur      ##\n");
 	printf("## -------------------------------------  ##\n");
 	printf("## Version de contruction septembre 2023  ##\n"); 
 	printf("############################################\n\n");
@@ -37,7 +38,6 @@ int main(int argc, char const *argv[])
 				// Saisie des éléments du QSO. [09/2023 >> Le minimum légal].
 				
 				system("clear");
-
 
 					char date[12];
 					int heure_d = 0;
@@ -65,7 +65,6 @@ int main(int argc, char const *argv[])
 					printf("Lieu d'émission : ");
 					scanf("%s" , lieu_emission);
 				
-
 					system("clear");
 
 						printf("Résumé de la saisie : \n");
@@ -81,10 +80,13 @@ int main(int argc, char const *argv[])
 
 						printf("Validez vous la saisie ? (1 oui / 2 non ) : \n");
 						scanf("%d" , &boucle_saisie);
-		
+
 			} while (boucle_saisie == 2);
 
-			printf("Votre QSO a été validé et inscrit dans le Journal de Bord\n\n");
+
+					// Inscrire le QSO dans le fichier .TXT
+
+					printf("Votre QSO a été validé et inscrit dans le Journal de Bord\n\n");
 
 		}
 
@@ -92,35 +94,55 @@ int main(int argc, char const *argv[])
 		{
 			int boucle_indicatif;
 
+			
 			do
 			{	
 				// Création du Journal de Bord [sans création du nom du dossier]
 
 				char indicatif_personnel[12];
+				char date_debut_journal[12];
+				int validation_saisie_journal;
 
 				printf("Allons préparer le Journal de Bord\n\n");
 				printf("Quels est votre indicatif : ");
 				scanf("%s" , indicatif_personnel);
-				printf("%s\n", indicatif_personnel );
-				
-				system("touch journal_indicatif.txt");
+				scanf("%s" , date_debut_journal);
 
-				FILE *journal_indicatif = fopen("journal_indicatif.txt" , "a");
+				printf("Votre Indicatif est : %s\n", indicatif_personnel );
+				printf("Vous débutez ce journal le %s : \n\n" , date_debut_journal );
+				printf("1 pour valider / 0 pour refaire la saisie\n");
+				scanf("%d", &validation_saisie_journal );
 
-				if (journal_indicatif == NULL)
-					exit(1);
+						if (validation_saisie_journal == 1)
+						{
+						
+						system("touch journal_indicatif.txt");
 
-				fprintf(journal_indicatif, "Journal de Bord de : %-12s .\n", indicatif_personnel );
-				fprintf(journal_indicatif, "En Heure Universelle (UTC)\n" );
-				fprintf(journal_indicatif, "##################################\n");
-				fclose(journal_indicatif);
+						FILE* journal_indicatif = fopen("journal_indicatif.txt" , "a");
 
-			} while (boucle_indicatif == 2);
+						if (journal_indicatif == NULL)
+							exit(1);
+
+						fprintf(journal_indicatif, "Journal de Bord de : %-12s .   Date de début du Journal : %-12s .\n"
+							, indicatif_personnel , date_debut_journal );
+						fprintf(journal_indicatif, "En Heure Universelle (UTC)\n" );
+						fprintf(journal_indicatif, "--------------------------------------------------------------------------------\n");
+						fprintf(journal_indicatif, "Date      ;  Début;  Fin  ;    Indicatif;  Fréquence;  Mode;    Lieu d'émission;\n");
+						fprintf(journal_indicatif, "--------------------------------------------------------------------------------\n");
+						fclose(journal_indicatif);	
+
+						printf("Votre Journal de Bord a été créé avec succés.\n");
+						printf("Il sera visible dans le dossier du programme : journal_indicatif.txt.\n");
+						break;
+						}
+
+			} while (boucle_indicatif == 0);
+			
 		}
 
 
 
-	printf("0 pour retour menu >> ");
+	printf("\n\nTaper 0 pour retourner au Menu Principal \n >> ");
 	scanf("%d" , &boucle_principale);
 
 	} while (boucle_principale == 0);
